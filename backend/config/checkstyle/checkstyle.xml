@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE module [
+        <!ELEMENT module (property|module)*>
+        <!ATTLIST module
+                name CDATA #REQUIRED>
+        <!ELEMENT property (#PCDATA)>
+        <!ATTLIST property
+                name CDATA #REQUIRED
+                value CDATA #REQUIRED>
+        ]>
+<module name="Checker">
+    <!-- Уровень серьезности ошибок -->
+    <property name="severity" value="error"/>
+
+    <!-- Проверяемые расширения файлов -->
+    <property name="fileExtensions" value="java"/>
+
+    <!-- Проверка наличия новой строки в конце файла -->
+    <module name="NewlineAtEndOfFile"/>
+
+    <!-- Проверка длины строки -->
+    <module name="LineLength">
+        <property name="max" value="120"/>
+    </module>
+
+    <!-- Основной модуль для проверки Java-кода -->
+    <module name="TreeWalker">
+        <!-- Проверка соглашений об именовании -->
+        <module name="ConstantName"/>
+        <module name="LocalVariableName"/>
+        <module name="MethodName"/>
+        <module name="ParameterName"/>
+        <module name="TypeName"/>
+
+        <!-- Проверка импортов -->
+        <module name="UnusedImports"/>
+        <module name="AvoidStarImport"/>
+
+        <!-- Проверка пробелов вокруг операторов -->
+        <module name="WhitespaceAround"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="NoWhitespaceAfter"/>
+
+        <!-- Проверка блоков кода -->
+        <module name="NeedBraces"/>
+
+        <!-- Проверка Javadoc -->
+        <module name="JavadocMethod"/>
+        <module name="JavadocType"/>
+
+        <!-- Проверка размера методов -->
+        <module name="MethodLength">
+            <property name="max" value="100"/>
+        </module>
+    </module>
+</module>

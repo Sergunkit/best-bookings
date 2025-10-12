@@ -1,0 +1,14 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "https://hexling.ru",
+      "localStorage": [
+        {
+          "name": "token",
+          "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcl8wMUB0ZXN0LnJ1IiwiaWF0IjoxNzQ3NTYyOTg5LCJleHAiOjE3NDc2NDkzODl9.o0WkFJoBNjre0CIxp9NKexaeK8iO7RjvG9diONDvEYs"
+        }
+      ]
+    }
+  ]
+}

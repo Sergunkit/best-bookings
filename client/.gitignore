@@ -1,0 +1,5 @@
+# React Router
+/.react-router/
+/build/
+/node_modules/
+generated_client/

@@ -1,0 +1,65 @@
+name: Playwright Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: |
+          cd tests/playwright
+          npm ci
+
+      - name: Install Playwright Browsers
+        run: |
+          cd tests/playwright
+          npx playwright install --with-deps
+
+      - name: Wait for site to be available
+        run: |
+          chmod +x tests/playwright/wait-for-run-tests.sh
+          ./tests/playwright/wait-for-run-tests.sh https://hexling.ru
+
+      - name: Run Playwright tests
+        env:
+          TEST_USER_FOR: ${{ secrets.TEST_USER_FOR}}
+          TEST_PASSWORD_FOR: ${{ secrets.TEST_PASSWORD_FOR }}
+          URL_FOR: ${{secrets.URL_FOR}}
+        run: |
+          cd tests/playwright
+          npx playwright test --trace on --reporter=list
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: tests/playwright/playwright-report/
+          retention-days: 30
+
+      - name: Upload trace files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: tests/playwright/test-results/
+          retention-days: 30
