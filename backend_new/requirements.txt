@@ -19,3 +19,5 @@ psycopg2-binary==2.9.10
     # via backend-new (pyproject.toml)
 sqlparse==0.5.3
     # via django
+drf-nested-routers==0.93.4
+    # via backend-new (pyproject.toml)

@@ -1,7 +1,21 @@
+from rest_framework.decorators import action
 from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Hotel
 from .serializers import HotelSerializer
+from .custom_filters import CustomFilterBackend, CustomOrderingFilter
 
 class HotelViewSet(viewsets.ModelViewSet):
     queryset = Hotel.objects.all()
     serializer_class = HotelSerializer
+    filter_backends = (DjangoFilterBackend, CustomFilterBackend, CustomOrderingFilter)
+
+    # вариант без вложенных маршрутов (для каждого типа запроса свой):
+    # @action(detail=True, methods=['get'])
+    # def rooms(self, request, pk=None):
+    #     hotel = self.get_object()
+    #     rooms = Room.objects.filter(hotel=hotel)
+    #     serializer = RoomSerializer(rooms, many=True)
+    #     return Response(serializer.data)
+    def get_queryset(self):
+        return super().get_queryset()

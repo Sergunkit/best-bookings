@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'django_filters',
     'amenities',
     'bookings',
     'favorites',
@@ -139,5 +140,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'hotel_booking.pagination.StandardResultsSetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'hotel_booking.pagination.CustomPagination',
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    # 'DEFAULT_RENDERER_CLASSES': [
+    #     'rest_framework.renderers.JSONRenderer',
+    #     'rest_framework.renderers.BrowsableAPIRenderer', закомментировать только эту строку если нужно отключить BrowserApi 
+
+    # ],
 }
