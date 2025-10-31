@@ -8,16 +8,28 @@ django==5.2.7
     # via
     #   backend-new (pyproject.toml)
     #   django-cors-headers
+    #   django-filter
     #   djangorestframework
+    #   djangorestframework-simplejwt
+    #   drf-nested-routers
 django-cors-headers==4.9.0
     # via backend-new (pyproject.toml)
+django-filter==25.2
+    # via backend-new (pyproject.toml)
 djangorestframework==3.16.1
+    # via
+    #   backend-new (pyproject.toml)
+    #   djangorestframework-simplejwt
+    #   drf-nested-routers
+djangorestframework-simplejwt==5.5.1
+    # via backend-new (pyproject.toml)
+drf-nested-routers==0.93.4
     # via backend-new (pyproject.toml)
 psycopg2==2.9.10
     # via backend-new (pyproject.toml)
 psycopg2-binary==2.9.10
     # via backend-new (pyproject.toml)
+pyjwt==2.10.1
+    # via djangorestframework-simplejwt
 sqlparse==0.5.3
     # via django
-drf-nested-routers==0.93.4
-    # via backend-new (pyproject.toml)

@@ -6,17 +6,9 @@ const basePath = process.env.NODE_ENV === 'development'
 
 const config = new Configuration({
   basePath,
-  fetchApi: async (url, init) => {
-    const token = localStorage.getItem('token');
-    const headers = new Headers(init?.headers || {});
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    return fetch(url, {
-      ...init,
-      headers,
-    });
+  accessToken: () => {
+    const token = localStorage.getItem('accessToken');
+    return token || '';
   },
 });
 const client = new DefaultApi(config);

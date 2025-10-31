@@ -67,12 +67,15 @@ const AuthPage = () => {
         authInfo: values,
       };
 
-      const { token } = await client.tokensCreate(tokensCreateRequest as TokensCreateRequest);
-      localStorage.setItem('token', token);
+      const tokenInfo = await client.tokensCreate(tokensCreateRequest as TokensCreateRequest);
+      const access = tokenInfo.access;
+      const refresh = tokenInfo.refresh;
+      localStorage.setItem('accessToken', access);
+      localStorage.setItem('refreshToken', refresh);
 
       // Получаем данные пользователя после успешной аутентификации
       const userResponse = await client.userMeGet();
-      login(userResponse);
+      login(userResponse, access, refresh);
 
       await navigate(prevPath);
     } catch (err) {

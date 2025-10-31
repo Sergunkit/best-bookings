@@ -8,7 +8,7 @@ import type { UserDto } from '@api';
 interface AuthContextType {
   isAuthenticated: boolean;
   user: UserDto | null;
-  login: (userData: UserDto) => void;
+  login: (userData: UserDto, accessToken: string, refreshToken: string) => void;
   logout: () => void;
   checkAuth: () => Promise<void>;
 }
@@ -20,31 +20,39 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState<UserDto | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const login = (userData: UserDto) => {
+  const login = (userData: UserDto, accessToken: string, refreshToken: string) => {
     setUser(userData);
     setIsAuthenticated(true);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   };
 
   const checkAuth = useCallback(async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
         setLoading(false);
         return;
       }
 
       const userResponse = await client.userMeGet();
-      login(userResponse);
-    } catch {
+      // Note: login function here is called with only userData, as tokens are already handled.
+      // If userMeGet returns new tokens, they should be passed to login.
+      // For now, assuming userMeGet only returns user data.
+      setUser(userResponse);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('checkAuth failed:', error);
       logout();
     } finally {
       setLoading(false);
