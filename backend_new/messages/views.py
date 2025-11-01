@@ -9,5 +9,5 @@ class MessageListView(APIView):
 
 class WebSocketInfoView(APIView):
     def get(self, request, *args, **kwargs):
-        # Заглушка для /api/ws/info
-        return Response({"websocket_url": "ws://localhost:8000/ws/"}, status=status.HTTP_200_OK)
+        # Заглушка для /api/ws/info: возвращаем пустой ответ, чтобы фронтенд не пытался установить WebSocket
+        return Response({}, status=status.HTTP_200_OK)

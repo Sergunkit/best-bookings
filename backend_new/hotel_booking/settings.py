@@ -143,6 +143,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'hotel_booking.pagination.CustomPagination',
     'DEFAULT_FILTER_BACKENDS': (

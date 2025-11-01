@@ -298,7 +298,8 @@ model AuthInfo {
 }
 
 model TokenInfo {
-  token: string;
+  access: string;
+  refresh: string;
 }
 
 model Message {
@@ -561,10 +562,7 @@ namespace Favorites {
 @route("/tokens")
 namespace tokens {
   @post
-  op create(@body authInfo: AuthInfo): {
-    @body token: TokenInfo;
-    @statusCode statusCode: 201;
-  } | UnprocessableEntityError;
+  op create(@body authInfo: AuthInfo): TokenInfo | UnprocessableEntityError;
 }
 
 @route("/messages")

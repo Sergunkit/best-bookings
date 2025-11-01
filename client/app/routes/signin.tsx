@@ -68,8 +68,8 @@ const AuthPage = () => {
       };
 
       const tokenInfo = await client.tokensCreate(tokensCreateRequest as TokensCreateRequest);
-      const access = tokenInfo.access;
-      const refresh = tokenInfo.refresh;
+      const { access } = tokenInfo;
+      const { refresh } = tokenInfo;
       localStorage.setItem('accessToken', access);
       localStorage.setItem('refreshToken', refresh);
 
