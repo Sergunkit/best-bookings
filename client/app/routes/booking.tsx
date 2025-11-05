@@ -97,7 +97,6 @@ const BookingPage = ({ loaderData }: Route.ComponentProps) => {
     setLoading(true);
     try {
       const bookingCreateDto: BookingCreateDto = {
-        userId: user.id,
         roomId: room.id,
         checkIn: selectedDates[0].startOf('day').toDate(),
         checkOut: selectedDates[1].startOf('day').toDate(),

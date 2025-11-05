@@ -8,23 +8,24 @@ from hotel_booking.pagination import CustomPagination
 from .models import Favorite
 from .serializers import FavoriteSerializer
 
-
 class UserFavoritesListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id, *args, **kwargs):
         if request.user.is_authenticated and request.user.id == user_id:
-            # Get IDs of hotels favorited by the user
-            favorite_hotel_ids = Favorite.objects.filter(user_id=user_id).values_list('hotel_id', flat=True)
+            hotels = Hotel.objects.filter(favorited_by__user_id=user_id).order_by('id')
 
-            # Filter hotels based on the favorite IDs
-            hotels = Hotel.objects.filter(id__in=favorite_hotel_ids)
+            serializer = HotelSerializer(hotels, many=True, context={'request': request})
 
-            paginator = CustomPagination()
-            paginated_hotels = paginator.paginate_queryset(hotels, request, view=self)
-            serializer = HotelSerializer(paginated_hotels, many=True)
-
-            return paginator.get_paginated_response(serializer.data)
+            return Response({
+                'data': serializer.data,
+                'pagination': {
+                    'page': 1,
+                    'perPage': len(serializer.data),
+                    'totalPages': 1,
+                    'total': len(serializer.data),
+                }
+            })
         return Response({"detail": "Not authenticated or unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -32,14 +33,21 @@ class FavoriteView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        serializer = FavoriteSerializer(data={'user': request.user.id, 'hotel': request.data.get('hotelId')})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, *args, **kwargs):
         hotel_id = request.data.get('hotelId')
+        if not hotel_id:
+            return Response({"detail": "hotelId is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        favorite, created = Favorite.objects.get_or_create(user=request.user, hotel_id=hotel_id)
+
+        hotel = Hotel.objects.get(pk=hotel_id)
+        serializer = HotelSerializer(hotel, context={'request': request})
+
+        if created:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, hotel_id, *args, **kwargs):
         try:
             favorite = Favorite.objects.get(user=request.user, hotel_id=hotel_id)
             favorite.delete()

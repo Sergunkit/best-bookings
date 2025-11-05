@@ -2,24 +2,20 @@ from rest_framework import serializers
 from .models import User, UserProfile
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password']
+        fields = ('id', 'email', 'password', 'first_name', 'last_name')
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
-        username = validated_data.get('username')
-        email = validated_data['email']
-        password = validated_data['password']
-
-        if not username:
-            username = email.split('@')[0]
-
+        """Create and return a new user."""
         user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
+            email=validated_data['email'],
+            password=validated_data['password'],
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', '')
         )
         return user
 

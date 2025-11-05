@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-n@b*$t1q$^)crh5voz*k)a^nh!a()to%)e9#eh#!+wbjnn1rd9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 ALLOWED_HOSTS = []
 
@@ -195,4 +195,3 @@ SIMPLE_JWT = {
 
     'TOKEN_OBTAIN_PAIR_SERIALIZER': 'users.serializers.CustomTokenObtainPairSerializer',
 }
-

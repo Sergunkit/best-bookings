@@ -225,7 +225,6 @@ model Booking {
 }
 
 model BookingCreateDto {
-  userId: int32;
   roomId: int32;
   checkIn: utcDateTime;
   checkOut: utcDateTime;
@@ -316,7 +315,7 @@ model MessageCreateDto {
   content: string;
 }
 
-@route("/hotels")
+@route("/hotels/")
 namespace Hotels {
   @get
   op list(...HotelParams): {
@@ -351,7 +350,7 @@ namespace Hotels {
   } | NotFoundError | UnauthorizedError | ForbiddenError;
 }
 
-@route("/amenities")
+@route("/amenities/")
 namespace Amenities {
   @get
   op list(): {
@@ -380,7 +379,7 @@ namespace Amenities {
   } | NotFoundError | UnauthorizedError | ForbiddenError;
 }
 
-@route("/rooms")
+@route("/rooms/")
 namespace Rooms {
   @get
   op list(...RoomParams): {
@@ -395,7 +394,7 @@ namespace Rooms {
   } | NotFoundError;
 }
 
-@route("/rooms/{roomId}/availability")
+@route("/rooms/{roomId}/availability/")
 namespace RoomAvailability {
   @get
   op get(@path roomId: int32, ...RoomAvailableDatesParams): {
@@ -404,7 +403,7 @@ namespace RoomAvailability {
   } | NotFoundError | UnprocessableEntityError;
 }
 
-@route("/hotels/{hotelId}/rooms")
+@route("/hotels/{hotelId}/rooms/")
 namespace HotelRooms {
   @get
   op list(@path hotelId: int32, ...RoomParams): {
@@ -433,7 +432,7 @@ namespace HotelRooms {
   } | NotFoundError | UnauthorizedError | ForbiddenError;
 }
 
-@route("/hotels/{hotelId}/rooms/{roomId}/amenities")
+@route("/hotels/{hotelId}/rooms/{roomId}/amenities/")
 @useAuth(BearerAuth)
 namespace RoomAmenities {
   @post
@@ -448,7 +447,7 @@ namespace RoomAmenities {
   } | NotFoundError | UnauthorizedError | ForbiddenError;
 }
 
-@route("/users")
+@route("/users/")
 namespace Users {
   @get
   @useAuth(BearerAuth)
@@ -478,7 +477,6 @@ namespace Users {
   } | NotFoundError | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
   @delete
-  @useAuth(BearerAuth)
   op delete(@path userId: int32): {
     @statusCode statusCode: 204;
   } | NotFoundError | UnauthorizedError | ForbiddenError;
@@ -494,7 +492,7 @@ namespace UserMe {
   } | UnauthorizedError;
 }
 
-@route("/users/{userId}/bookings")
+@route("/users/{userId}/bookings/")
 @useAuth(BearerAuth)
 namespace UserBookings {
   @get
@@ -504,7 +502,7 @@ namespace UserBookings {
   } | UnauthorizedError | ForbiddenError;
 }
 
-@route("/users/{userId}/favorites")
+@route("/users/{userId}/favorites/")
 @useAuth(BearerAuth)
 namespace UserFavorites {
   @get
@@ -515,7 +513,7 @@ namespace UserFavorites {
   } | UnauthorizedError | ForbiddenError;
 }
 
-@route("/bookings")
+@route("/bookings/")
 @useAuth(BearerAuth)
 namespace Bookings {
   @get
@@ -542,7 +540,7 @@ namespace Bookings {
   } | NotFoundError | ForbiddenError;
 }
 
-@route("/favorites")
+@route("/favorites/")
 @useAuth(BearerAuth)
 namespace Favorites {
   @post
@@ -565,7 +563,7 @@ namespace tokens {
   op create(@body authInfo: AuthInfo): TokenInfo | UnprocessableEntityError;
 }
 
-@route("/messages")
+@route("/messages/")
 @useAuth(BearerAuth)
 namespace Messages {
   @get
