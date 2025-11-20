@@ -30,7 +30,7 @@ jobs:
       - name: Wait for site to be available
         run: |
           chmod +x tests/playwright/wait-for-run-tests.sh
-          ./tests/playwright/wait-for-run-tests.sh https://hexling.ru
+          ./tests/playwright/wait-for-run-tests.sh https://unreal-rooms.ru
 
       - name: Run Playwright tests
         env:
