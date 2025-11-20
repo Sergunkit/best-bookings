@@ -1,4 +1,35 @@
-# Welcome HEXLING
+# Welcome UNREAL ROOMS
+
+This is a modern web application using [React Router](https://reactrouter.com).
+
+It was created by running `npx create-react-router`.
+
+## Development
+
+To get started, install dependencies:
+
+```sh
+npm install
+```
+
+Then, to run the app in development mode:
+
+```sh
+npm run dev
+```
+
+To build the app for production:
+
+```sh
+npm run build
+```
+
+To run the production server:
+
+```sh
+npm run start
+```
+
 A modern applications using React Router.
 
 ## Features

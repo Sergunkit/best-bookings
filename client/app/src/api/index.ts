@@ -12,7 +12,7 @@ const getBasePath = () => {
   if (import.meta.env.MODE === 'development') {
     return 'http://localhost:8000/api';
   }
-  return 'https://hexling.ru/api';
+  return 'https://unreal-rooms.ru/api';
 };
 
 const basePath = getBasePath();

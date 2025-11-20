@@ -2,7 +2,7 @@
   "cookies": [],
   "origins": [
     {
-      "origin": "https://hexling.ru",
+      "origin": "https://unreal-rooms.ru",
       "localStorage": [
         {
           "name": "token",

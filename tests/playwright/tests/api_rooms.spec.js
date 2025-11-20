@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 const HOTEL_ID = 1;
-const ROOMS_ENDPOINT = `https://hexling.ru/api/hotels/ ${HOTEL_ID}/rooms`;
+const ROOMS_ENDPOINT = `https://unreal-rooms.ru/api/hotels/ ${HOTEL_ID}/rooms`;
 
 test.describe(`API тесты для /hotels/${HOTEL_ID}/rooms`, () => {
   let response;

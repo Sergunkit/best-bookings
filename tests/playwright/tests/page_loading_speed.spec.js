@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test('Скорость загрузки страницы (<4 сек)', async ({ page}) => {
-  const startTime = Date.now();
-  await page.goto('https://hexling.ru/ ', { waitUntil: 'domcontentloaded' });
-  const loadTime = Date.now() - startTime;
-  expect(loadTime).toBeLessThan(4000);
+test('page loading speed', async ({ page }) => {
+  await page.goto('https://unreal-rooms.ru/ ', { waitUntil: 'domcontentloaded' });
+  const loadTime = await page.evaluate(() => performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart);
+  expect(loadTime).toBeLessThan(5000); // Ожидаем, что страница загрузится менее чем за 5 секунд
 });

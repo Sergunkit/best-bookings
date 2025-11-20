@@ -21,7 +21,7 @@ services:
     volumes: 
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --keep-until-expiring --email danozh.b@gmail.com -d hexling.ru --agree-tos
+    command: certonly --webroot -w /var/www/certbot --keep-until-expiring --email danozh.b@gmail.com -d unreal-rooms.ru --agree-tos
     networks:
       - certbot-network
 

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const AMENITIES_ENDPOINT = 'https://hexling.ru/api/amenities ';
+const AMENITIES_ENDPOINT = 'https://unreal-rooms.ru/api/amenities ';
 
 test.describe('API тесты для /amenities', () => {
   let response;
@@ -39,7 +39,7 @@ test.describe('API тесты для /amenities', () => {
     });
   });
 
-  test('ID должны быть уникальными', () => {
+  test('ID должны быть уникальными', ()(() => {
     const ids = response.body.map((a) => a.id);
     const uniqueIds = new Set(ids);
     expect(ids.length).toBe(uniqueIds.size);

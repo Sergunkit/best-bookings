@@ -1,7 +1,7 @@
 import { test, expect } from '../fixtures/auth.fixture';
 
 test('Отображение основных элементов страницы', async ({ page }) => {
-  await expect(page.locator('header >> text=HEXLING')).toBeVisible();
+  await expect(page.locator('header >> text=UNREAL ROOMS')).toBeVisible();
   await expect(page.locator('header img[src="/logo.png"]')).toBeVisible();
   await expect(page.locator('.ant-card-head-title:has-text("Все фильтры")')).toBeVisible();
   await expect(page.locator('input[placeholder="Поиск по названию отеля"]')).toBeVisible();

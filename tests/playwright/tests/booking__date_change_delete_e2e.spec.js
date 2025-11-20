@@ -23,7 +23,7 @@ test('Бронирование', async ({ page }) => {
   await page.getByRole('button', { name: 'Перейти к списку бронирований' }).click();
   await page.getByRole('button', { name: 'Удалить бронь' }).click();
   await page.getByRole('button', { name: 'user Профиль' }).click();
-  await page.getByRole('link', { name: 'HEXLING' }).click();
+  await page.getByRole('link', { name: 'UNREAL ROOMS' }).click();
   await page.getByRole('button', { name: 'user Профиль' }).click();
   await page.getByRole('link', { name: 'Выход' }).click();
 });

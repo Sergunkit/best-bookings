@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('GET /hotels - проверка структуры ответа', async ({ request }) => {
-  const response = await request.get('https://hexling.ru/api/hotels');
+  const response = await request.get('https://unreal-rooms.ru/api/hotels');
   expect(response.status()).toBe(200);
   const responseData = await response.json();
   expect(responseData).toHaveProperty('data');
