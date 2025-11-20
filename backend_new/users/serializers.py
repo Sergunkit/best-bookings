@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, UserProfile
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,10 +20,23 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = 'email'
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Get the refresh token object
+        refresh = self.get_token(self.user)
+
+        # Forcefully ensure user_id is an integer in the payload
+        refresh['user_id'] = int(self.user.id)
+
+        # Add the token strings to the response
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+
+        return data
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()

@@ -1,19 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/only-throw-error */
+/* eslint-disable react/button-has-type */
+/* eslint-disable max-len */
+/* eslint-disable object-curly-newline */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Button, Form, Input, Card, Typography, Alert, Tabs,
-} from 'antd';
-import client from '@api';
-import type { UserCreateDto, TokensCreateRequest, UsersCreateRequest } from '@api';
+} from 'antd'; // Temporarily removed Ant Design imports
+import client, { basePath } from '@api';
+import type { UserCreateDto, TokensCreateRequest, UsersCreateRequest, TokenInfo } from '@api';
 import { useAuth } from '../authContext';
 
-const { TabPane } = Tabs;
-const { Title } = Typography;
+const { TabPane } = Tabs; // TabPane is deprecated
+const { Title } = Typography; // Temporarily removed
 
 type ErrorWithStatus = {
   response: {
@@ -33,6 +38,9 @@ const isErrorWithStatus = (err: unknown): err is ErrorWithStatus => {
 
 const getErrorMessage = (err: unknown): string => {
   if (isErrorWithStatus(err) && err.response.status === 403) {
+    return 'Неверные логин или пароль, попробуйте ещё раз';
+  }
+  if (isErrorWithStatus(err) && err.response.status === 401) {
     return 'Неверные логин или пароль, попробуйте ещё раз';
   }
 
@@ -84,6 +92,19 @@ const AuthPage = () => {
       setLoading(false);
     }
   };
+
+  const tabItems = useMemo(() => [
+    {
+      label: 'Вход',
+      key: 'login',
+      children: null,
+    },
+    {
+      label: 'Регистрация',
+      key: 'register',
+      children: null,
+    },
+  ], []);
 
   return (
     <div style={{

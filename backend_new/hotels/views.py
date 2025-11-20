@@ -5,6 +5,7 @@ from .models import Hotel
 from .serializers import HotelSerializer
 from .custom_filters import CustomFilterBackend, CustomOrderingFilter
 import logging
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +13,8 @@ class HotelViewSet(viewsets.ModelViewSet):
     queryset = Hotel.objects.all()
     serializer_class = HotelSerializer
     filter_backends = (DjangoFilterBackend, CustomFilterBackend, CustomOrderingFilter)
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+    ordering = ['id']
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

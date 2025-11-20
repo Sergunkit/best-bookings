@@ -323,7 +323,7 @@ namespace Hotels {
     @body hotels: PaginatedDto<Hotel[], HotelFilters, HotelSortOptions>;
   };
 
-  @get
+  @get @route("{hotelId}/")
   op get(@path hotelId: int32): {
     @statusCode statusCode: 200;
     @body hotel: Hotel;
@@ -336,14 +336,14 @@ namespace Hotels {
     @body newHotel: Hotel;
   } | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @patch
+  @patch @route("{hotelId}/")
   @useAuth(BearerAuth)
   op update(@path hotelId: int32, @body hotel: HotelUpdateDto): {
     @statusCode statusCode: 200;
     @body updatedHotel: Hotel;
   } | NotFoundError | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @delete
+  @delete @route("{hotelId}/")
   @useAuth(BearerAuth)
   op delete(@path hotelId: int32): {
     @statusCode statusCode: 204;
@@ -365,14 +365,14 @@ namespace Amenities {
     @body newAmenity: Amenity;
   } | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @patch
+  @patch @route("{amenityId}/")
   @useAuth(BearerAuth)
   op update(@path amenityId: int32, @body amenity: AmenityUpdateDto): {
     @statusCode statusCode: 200;
     @body updatedAmenity: Amenity;
   } | NotFoundError | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @delete
+  @delete @route("{amenityId}/")
   @useAuth(BearerAuth)
   op delete(@path amenityId: int32): {
     @statusCode statusCode: 204;
@@ -387,7 +387,7 @@ namespace Rooms {
     @body rooms: PaginatedDto<RoomDto[], RoomFilters, RoomSortOptions>;
   };
 
-  @get
+  @get @route("{roomId}/")
   op get(@path roomId: int32): {
     @statusCode statusCode: 200;
     @body room: RoomDto;
@@ -418,14 +418,14 @@ namespace HotelRooms {
     @body newRoom: RoomDto;
   } | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @patch
+  @patch @route("{roomId}/")
   @useAuth(BearerAuth)
   op update(@path hotelId: int32, @path roomId: int32, @body room: RoomUpdateDto): {
     @statusCode statusCode: 200;
     @body updatedRoom: RoomDto;
   } | NotFoundError | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @delete
+  @delete @route("{roomId}/")
   @useAuth(BearerAuth)
   op delete(@path hotelId: int32, @path roomId: int32): {
     @statusCode statusCode: 204;
@@ -441,10 +441,10 @@ namespace RoomAmenities {
     @body addedAmenity: RoomAmenityDto;
   } | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @delete
+  @delete @route("{amenityId}/")
   op delete(@path hotelId: int32, @path roomId: int32, @path amenityId: int32): {
     @statusCode statusCode: 204;
-  } | NotFoundError | UnauthorizedError | ForbiddenError;
+    } | NotFoundError | UnauthorizedError | ForbiddenError;
 }
 
 @route("/users/")
@@ -456,7 +456,7 @@ namespace Users {
     @body users: PaginatedDto<UserDto[], UserFilters, UserSortOptions>;
   } | UnauthorizedError | ForbiddenError;
 
-  @get
+  @get @route("{userId}/")
   @useAuth(BearerAuth)
   op get(@path userId: int32): {
     @statusCode statusCode: 200;
@@ -469,20 +469,20 @@ namespace Users {
     @body newUser: UserDto;
   } | UnprocessableEntityError;
 
-  @patch
+  @patch @route("{userId}/")
   @useAuth(BearerAuth)
   op update(@path userId: int32, @body user: UserUpdateDto): {
     @statusCode statusCode: 200;
     @body updatedUser: UserDto;
   } | NotFoundError | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @delete
+  @delete @route("{userId}/")
   op delete(@path userId: int32): {
     @statusCode statusCode: 204;
   } | NotFoundError | UnauthorizedError | ForbiddenError;
 }
 
-@route("/users/me")
+@route("/users/me/")
 @useAuth(BearerAuth)
 namespace UserMe {
   @get
@@ -516,7 +516,7 @@ namespace UserFavorites {
 @route("/bookings/")
 @useAuth(BearerAuth)
 namespace Bookings {
-  @get
+  @get @route("{bookingId}/")
   op get(@path bookingId: int32): {
     @statusCode statusCode: 200;
     @body booking: Booking;
@@ -528,13 +528,13 @@ namespace Bookings {
     @body newBooking: Booking;
   } | UnprocessableEntityError | ForbiddenError;
 
-  @patch
+  @patch @route("{bookingId}/")
   op update(@path bookingId: int32, @body booking: BookingUpdateDto): {
     @statusCode statusCode: 200;
     @body updatedBooking: Booking;
   } | NotFoundError | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @delete
+  @delete @route("{bookingId}/")
   op delete(@path bookingId: int32): {
     @statusCode statusCode: 204;
   } | NotFoundError | ForbiddenError;
@@ -550,17 +550,17 @@ namespace Favorites {
     @body newFavorite: Hotel;
   } | UnprocessableEntityError | UnauthorizedError | ForbiddenError;
 
-  @delete
+  @delete @route("{hotelId}/")
   @operationId("deleteFavorite")
   op delete(@path hotelId: int32): {
     @statusCode statusCode: 204;
   } | NotFoundError | UnauthorizedError | ForbiddenError;
 }
 
-@route("/tokens")
+@route("/tokens/")
 namespace tokens {
   @post
-  op create(@body authInfo: AuthInfo): TokenInfo | UnprocessableEntityError;
+  op create(...AuthInfo): TokenInfo | UnprocessableEntityError;
 }
 
 @route("/messages/")
@@ -572,7 +572,7 @@ namespace Messages {
     @body messages: Message[];
   } | UnauthorizedError | ForbiddenError;
 
-  @get
+  @get @route("{userId}/")
   op get(@path userId: int32): {
     @statusCode statusCode: 200;
     @body messages: Message[];

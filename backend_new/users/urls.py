@@ -11,8 +11,8 @@ users_router = routers.NestedDefaultRouter(router, r'users', lookup='user')
 users_router.register(r'bookings', BookingViewSet, basename='user-bookings')
 
 urlpatterns = [
-    path('users', UserViewSet.as_view({'get': 'list', 'post': 'create'}), name='user-list'),
-    path('users/me', UserViewSet.as_view({'get': 'me'}), name='user-me-no-slash'),
+    path('users/', UserViewSet.as_view({'get': 'list', 'post': 'create'}), name='user-list'),
+    path('users/me/', UserViewSet.as_view({'get': 'me'}), name='user-me-no-slash'),
     path('', include(router.urls)),
     path('', include(users_router.urls)),
 ]

@@ -107,7 +107,7 @@ const BookingsPage = () => {
                       >
                         Изменить даты
                       </Button>
-                      <Button color="danger" variant="outlined" onClick={() => handleDelete(Number(booking.id))}>
+                      <Button color="danger" variant="outlined" onClick={() => handleDelete(booking.id)}>
                         Удалить бронь
                       </Button>
                     </div>

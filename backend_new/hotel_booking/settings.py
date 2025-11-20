@@ -11,6 +11,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n@b*$t1q$^)crh5voz*k)a^nh!a()to%)e9#eh#!+wbjnn1rd9'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-n@b*$t1q$^)crh5voz*k)a^nh!a()to%)e9#eh#!+wbjnn1rd9')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 APPEND_SLASH = True
 
@@ -34,6 +35,7 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'users.User'
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
     'hotels',
     'rooms',
     'users',
+    # 'chat.apps.ChatConfig',
     'rest_framework_simplejwt',
 ]
 
@@ -81,6 +84,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'hotel_booking.wsgi.application'
+ASGI_APPLICATION = 'hotel_booking.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(os.environ.get('REDIS_HOST', 'localhost'), 6379)],
+        },
+    },
+}
 
 
 # Database
@@ -89,11 +102,11 @@ WSGI_APPLICATION = 'hotel_booking.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hotel_booking_db',
-        'USER': 'sergunkit',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.environ.get('POSTGRES_DB', 'hotel_booking_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'sergunkit'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '1234'),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432'),
     }
 }
 

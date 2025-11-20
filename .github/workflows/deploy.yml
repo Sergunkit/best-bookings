@@ -1,25 +1,123 @@
-name: Deploy to VPS
+# Имя рабочего процесса, отображаемое в GitHub Actions
+name: Build, Push, and Deploy
 
 on:
+  # Запускать рабочий процесс при пуше в ветку main
   push:
     branches:
       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+# Определяем переменные окружения для всего пайплайна
+env:
+  # Имя владельца репозитория и репозитория (например, 'your-username/hotel-booking')
+  # Это нужно для формирования тегов Docker-образов.
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1
+jobs:
+  build-and-push:
+    # Название задачи
+    name: Build, Scan and Push Images
+    # Запускать на последней версии Ubuntu
+    runs-on: ubuntu-latest
+    # Права доступа для токена GITHUB_TOKEN. 'packages: write' нужен для загрузки в ghcr.io.
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # 1. Клонирование репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Вход в GitHub Container Registry (ghcr.io)
+      # Используется стандартный GITHUB_TOKEN, который генерируется для каждого запуска.
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Установка Docker Buildx для более эффективной сборки
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 4. Сборка и загрузка образа CLIENT
+      - name: Build and push client image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/client:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # 5. Сборка и загрузка образа BACKEND
+      - name: Build and push backend image
+        id: build-backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend_new
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # 6. Сканирование образа BACKEND на уязвимости
+      # Этот шаг выполняется ПОСЛЕ загрузки образа в репозиторий.
+      # Он проверяет образ на наличие известных уязвимостей (CVE).
+      - name: Scan backend image for vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          # Указываем полный тег только что собранного образа
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
+          format: 'table'
+          # Завершать сборку с ошибкой, если найдены уязвимости уровня HIGH или CRITICAL
+          exit-code: '1'
+          severity: 'HIGH,CRITICAL'
+
+  deploy:
+    # Название задачи
+    name: Deploy to Server
+    # Эта задача зависит от успешного выполнения 'build-and-push'
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Развертывание на сервере по SSH
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # Переходим в директорию проекта на сервере
             cd /opt/hotel-booking
-            git pull origin main
-            make gen-all
-            make stop
-            make start
+
+            # Создаем .env файл из секретов GitHub.
+            # Это безопасный способ передать учетные данные на сервер.
+            echo "--- Creating .env file ---"
+            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" > .env
+            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+            echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
+            
+            # Обновляем docker-compose.yml, чтобы он использовал образы из ghcr.io
+            # Это ключевой шаг, который переключает docker-compose с локальной сборки на использование готовых образов.
+            echo "--- Updating docker-compose.yml to use ghcr.io images ---"
+            sed -i 's|image: hotel-booking-backend-new|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest|' docker-compose.yml
+            sed -i 's|build:\n      context: \./client|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/client:latest|' docker-compose.yml
+            # Удаляем build-контекст для backend, так как теперь используется image
+            sed -i '/context: \.\/backend_new/,/dockerfile: Dockerfile/d' docker-compose.yml
+
+
+            # Скачиваем последние версии образов из ghcr.io
+            echo "--- Pulling latest images from registry ---"
+            docker compose pull
+
+            # Перезапускаем сервисы в фоновом режиме.
+            # --remove-orphans удаляет контейнеры для сервисов, которых больше нет в docker-compose.yml.
+            echo "--- Restarting services ---"
+            docker compose up -d --remove-orphans

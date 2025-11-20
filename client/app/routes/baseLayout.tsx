@@ -77,7 +77,7 @@ const BaseLayout: React.FC = () => {
           <Flex justify="space-between" align="center">
             <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
               <Avatar src="/logo.png" />
-              <span style={{ color: 'white', marginLeft: 8, fontSize: 18 }}>HEXLING</span>
+              <span style={{ color: 'white', marginLeft: 8, fontSize: 18 }}>Unreal Rooms</span>
             </Link>
 
             <Flex align="center" gap={16}>
@@ -115,7 +115,7 @@ const BaseLayout: React.FC = () => {
         </Content>
 
         <Footer style={{ textAlign: 'center' }}>
-          HEXLING © {new Date().getFullYear()} Created by students of Hexlet
+          Unreal Rooms © {new Date().getFullYear()} Created by Sergunkit
         </Footer>
 
         {isAuthenticated && <ChatWidget />}

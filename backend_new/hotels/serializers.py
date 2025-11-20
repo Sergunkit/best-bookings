@@ -11,7 +11,7 @@ class HotelSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'rating', 'stars', 'photoSrc', 'is_favorite']
 
     def get_is_favorite(self, obj):
-        user = self.context['request'].user
-        if user.is_authenticated:
-            return Favorite.objects.filter(hotel=obj, user=user).exists()
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return Favorite.objects.filter(hotel=obj, user=request.user).exists()
         return False

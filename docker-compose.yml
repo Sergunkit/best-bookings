@@ -26,33 +26,45 @@ services:
       - certbot-network
 
   server:
+    # Указываем, что сервис 'server' теперь собирается из директории backend_new
     build:
-      context: ./backend
+      context: ./backend_new
       dockerfile: Dockerfile
+    # Меняем имя образа для ясности
+    image: hotel-booking-backend-new
+    # Пробрасываем порт 8000 (uvicorn) на 8080 (для nginx)
     ports:
-      - "8080:8080"
+      - "8080:8000"
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mydb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_PROFILES_ACTIVE=prod
+      # Переменные для подключения к БД (из .env)
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      # Секретный ключ Django (из .env)
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      # Указываем хост БД для Django
+      - DATABASE_HOST=db
+    volumes:
+      # Монтируем том для хранения персистентных данных бэкенда (например, флаг-файла)
+      - backend_persistent_data:/app/persistent_data
     restart: unless-stopped
 
   db:
     image: postgres:17
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/data.sql:/docker-entrypoint-initdb.d/data.sql
     restart: unless-stopped
 
 volumes:
   postgres_data:
+  # Том для персистентных данных бэкенда
+  backend_persistent_data:
 
 networks:
   certbot-network:
